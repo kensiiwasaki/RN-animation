@@ -1,39 +1,53 @@
-import { Button, StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import {
+  Button,
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  Pressable,
+} from 'react-native';
 import Lottie from 'lottie-react-native';
 import { useEffect, useRef, useState } from 'react';
 
-const callFakeAPI = async () => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve('success');
-    }, 3000);
-  });
-};
-
 export default function App() {
   const animation: React.LegacyRef<Lottie> = useRef(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLiked, setIsLiked] = useState(true);
 
   useEffect(() => {
-    callFakeAPI().then(() => {
-      setIsLoading(false);
-    });
+    init();
   }, []);
+
+  const init = () => {
+    animation.current?.play(0, 1);
+  };
+
+  const like = () => {
+    animation.current?.play(17, 90);
+  };
+
+  const unLike = () => {
+    animation.current?.play(111, 170);
+  };
+
+  const onPressLike = () => {
+    if (isLiked) {
+      setIsLiked(false);
+      unLike();
+    } else {
+      setIsLiked(true);
+      like();
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      {isLoading ? (
+      <Pressable onPress={onPressLike} style={{ width: 200, height: 200 }}>
         <Lottie
-          source={require('./assets/loading.json')}
-          style={{ width: 100 }}
-          autoPlay
-          loop
+          ref={animation}
+          source={require('./assets/like.json')}
+          loop={false}
         />
-      ) : (
-        <View style={{ padding: 10 }}>
-          <Text>testtesttesttesttesttesttesttesttesttest</Text>
-        </View>
-      )}
+      </Pressable>
     </SafeAreaView>
   );
 }
