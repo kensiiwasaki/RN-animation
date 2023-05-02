@@ -1,18 +1,31 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import Lottie from "lottie-react-native"
+import { Button, StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import Lottie from 'lottie-react-native';
+import { useRef } from 'react';
 
 export default function App() {
+  const animation: React.LegacyRef<Lottie> = useRef(null);
+
+  const play = () => {
+    animation.current?.play();
+  };
+
+  const pause = () => {
+    animation.current?.pause();
+  };
+
+  const reset = () => {
+    animation.current?.reset();
+  };
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <Lottie
-      source={require('./assets/gradientBall.json')}
-      autoPlay
-      loop
-      />
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <Lottie ref={animation} source={require('./assets/loading.json')} loop />
+      <View>
+        <Button onPress={play} title="Play" />
+        <Button onPress={pause} title="Pause" />
+        <Button onPress={reset} title="Reset" />
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -21,6 +34,5 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
   },
 });
