@@ -1,18 +1,40 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import Lottie from "lottie-react-native"
+import { Button, StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import Lottie from 'lottie-react-native';
+import { useEffect, useRef, useState } from 'react';
+
+const callFakeAPI = async () => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve('success');
+    }, 3000);
+  });
+};
 
 export default function App() {
+  const animation: React.LegacyRef<Lottie> = useRef(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    callFakeAPI().then(() => {
+      setIsLoading(false);
+    });
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <Lottie
-      source={require('./assets/gradientBall.json')}
-      autoPlay
-      loop
-      />
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaView style={styles.container}>
+      {isLoading ? (
+        <Lottie
+          source={require('./assets/loading.json')}
+          style={{ width: 100 }}
+          autoPlay
+          loop
+        />
+      ) : (
+        <View style={{ padding: 10 }}>
+          <Text>testtesttesttesttesttesttesttesttesttest</Text>
+        </View>
+      )}
+    </SafeAreaView>
   );
 }
 
