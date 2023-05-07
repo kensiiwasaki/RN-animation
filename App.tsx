@@ -1,58 +1,136 @@
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  Button,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { MotiView } from 'moti';
+import Checkbox from 'expo-checkbox';
+import { useState } from 'react';
 
-const NewLabel = () => {
+type ToDoItemProps = {
+  toTo: ToDo;
+  onPressDone: (id: number) => void;
+};
+
+type ToDo = {
+  id: number;
+  title: string;
+  isDone: boolean;
+};
+
+const ToDoItem = ({ toTo, onPressDone }: ToDoItemProps) => {
+  const { id, title, isDone } = toTo;
+
   return (
-    <View style={styles.itemContainer}>
-      <Text style={styles.text}>NEW!!</Text>
-    </View>
+    <MotiView
+      style={styles.toDoContainer}
+      from={{ opacity: 0, translateX: -300 }}
+      animate={{ opacity: isDone ? 0.3 : 1, translateX: 0 }}
+    >
+      <Checkbox
+        style={styles.checkbox}
+        value={isDone}
+        onValueChange={() => onPressDone(id)}
+      />
+      <Text style={styles.text}>{title}</Text>
+    </MotiView>
   );
 };
 
 export default function App() {
+  const [inputText, setInputText] = useState<string>('');
+  const [toDos, setToDos] = useState<ToDo[]>([]);
+
+  const onChangeText = (text: string) => {
+    setInputText(text);
+  };
+
+  const onPressAdd = () => {
+    const _toDos = [
+      ...toDos,
+      {
+        id: toDos.length + 1,
+        title: inputText,
+        isDone: false,
+      },
+    ];
+    setToDos(_toDos);
+    setInputText('');
+  };
+
+  const onPressDone = (id: number) => {
+    const _toDos = toDos.map((toDo) => {
+      if (toDo.id !== id) {
+        return toDo;
+      }
+      return {
+        ...toDo,
+        isDone: !toDo.isDone,
+      };
+    });
+    setToDos(_toDos);
+  };
+
   return (
-    <View style={styles.container}>
-      <MotiView
-        from={{ opacity: 0.2 }}
-        animate={{ opacity: 1 }}
-        transition={{ loop: true }}
-      >
-        <NewLabel />
-      </MotiView>
-      <MotiView
-        from={{ scale: 1 }}
-        animate={{ scale: 1.2 }}
-        transition={{ loop: true }}
-      >
-        <NewLabel />
-      </MotiView>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.listContainer}>
+        {toDos.map((toDo) => (
+          <ToDoItem key={toDo.id} toTo={toDo} onPressDone={onPressDone} />
+        ))}
+      </ScrollView>
+      <View style={styles.formContainer}>
+        <TextInput
+          style={styles.input}
+          onChangeText={onChangeText}
+          value={inputText}
+        />
+        <Button title="Add" onPress={onPressAdd} />
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
   },
-  box: {
-    width: 100,
-    height: 100,
-    backgroundColor: 'red',
+  listContainer: {
+    width: '100%',
   },
-  itemContainer: {
-    paddingVertical: 10,
-    paddingHorizontal: 30,
+  formContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    marginBottom: 20,
+    padding: 10,
+  },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: 'gray',
     borderRadius: 10,
-    backgroundColor: '#EC407A',
-    justifyContent: 'center',
+    padding: 10,
+  },
+  toDoContainer: {
+    flex: 1,
+    height: 60,
+    margin: 10,
+    backgroundColor: '#90CAF9',
+    borderRadius: 10,
+    flexDirection: 'row',
     alignItems: 'center',
-    margin: 20,
+    justifyContent: 'flex-start',
+    padding: 10,
   },
   text: {
-    color: 'white',
-    fontWeight: 'bold',
+    fontSize: 20,
+    color: '#455A64',
+  },
+  checkbox: {
+    marginRight: 10,
   },
 });
