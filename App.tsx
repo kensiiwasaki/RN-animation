@@ -6,56 +6,50 @@ import {
   Animated,
   Button,
   Easing,
+  ScrollView,
 } from 'react-native';
 
 export default function App() {
-  const animatedX = useRef(new Animated.Value(0)).current;
-
-  const move = () => {
-    Animated.timing(animatedX, {
-      toValue: 200,
-      duration: 3000,
-      useNativeDriver: true,
-    }).start();
-  };
+  const animatedScrollY = useRef(new Animated.Value(0)).current;
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View
-        style={{
-          width: 100,
-          height: 100,
-          backgroundColor: 'green',
-          margin: 20,
-        }}
-      />
-      <Animated.View
-        style={[
-          {
+    <ScrollView
+      onScroll={Animated.event([
+        {
+          nativeEvent: {
+            contentOffset: {
+              y: animatedScrollY,
+            },
+          },
+        },
+      ])}
+      scrollEventThrottle={16}
+    >
+      <View style={styles.container}>
+        <View style={{ height: 500 }} />
+        <Animated.View
+          style={{
             width: 100,
             height: 100,
-            backgroundColor: 'green',
-            margin: 20,
-          },
-          { transform: [{ translateX: animatedX }] },
-          {
-            opacity: animatedX.interpolate({
+            margin: 10,
+            backgroundColor: 'blue',
+            opacity: animatedScrollY.interpolate({
               inputRange: [0, 100],
-              outputRange: [0, 0.5],
+              outputRange: [1, 0],
               extrapolate: 'clamp',
             }),
-          },
-        ]}
-      />
-      <Button title="move" onPress={move} />
-    </SafeAreaView>
+          }}
+        />
+        <View style={{ height: 900 }} />
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'center',
   },
 });
