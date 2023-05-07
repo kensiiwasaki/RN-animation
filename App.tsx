@@ -15,7 +15,6 @@ export default function App() {
     Animated.timing(animatedX, {
       toValue: 100,
       duration: 3000,
-      easing: Easing.bounce,
       useNativeDriver: true,
     }).start();
   };
@@ -31,6 +30,12 @@ export default function App() {
             marginTop: 20,
           },
           { transform: [{ translateX: animatedX }] },
+          {
+            opacity: animatedX.interpolate({
+              inputRange: [0, 100],
+              outputRange: [0, 1],
+            }),
+          },
         ]}
       />
       <Button title="move" onPress={move} />
