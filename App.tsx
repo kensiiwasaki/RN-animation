@@ -1,95 +1,32 @@
-import {
-  Button,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
-import { MotiView } from 'moti';
-import Checkbox from 'expo-checkbox';
-import { useState } from 'react';
-
-type ToDoItemProps = {
-  toTo: ToDo;
-  onPressDone: (id: number) => void;
-};
-
-type ToDo = {
-  id: number;
-  title: string;
-  isDone: boolean;
-};
-
-const ToDoItem = ({ toTo, onPressDone }: ToDoItemProps) => {
-  const { id, title, isDone } = toTo;
-
-  return (
-    <MotiView
-      style={styles.toDoContainer}
-      from={{ opacity: 0, translateX: -300 }}
-      animate={{ opacity: isDone ? 0.3 : 1, translateX: 0 }}
-    >
-      <Checkbox
-        style={styles.checkbox}
-        value={isDone}
-        onValueChange={() => onPressDone(id)}
-      />
-      <Text style={styles.text}>{title}</Text>
-    </MotiView>
-  );
-};
+import { useRef } from 'react';
+import { SafeAreaView, StyleSheet, View, Animated, Button } from 'react-native';
 
 export default function App() {
-  const [inputText, setInputText] = useState<string>('');
-  const [toDos, setToDos] = useState<ToDo[]>([]);
+  const animatedOpacity = useRef(new Animated.Value(0)).current;
 
-  const onChangeText = (text: string) => {
-    setInputText(text);
-  };
-
-  const onPressAdd = () => {
-    const _toDos = [
-      ...toDos,
-      {
-        id: toDos.length + 1,
-        title: inputText,
-        isDone: false,
-      },
-    ];
-    setToDos(_toDos);
-    setInputText('');
-  };
-
-  const onPressDone = (id: number) => {
-    const _toDos = toDos.map((toDo) => {
-      if (toDo.id !== id) {
-        return toDo;
-      }
-      return {
-        ...toDo,
-        isDone: !toDo.isDone,
-      };
-    });
-    setToDos(_toDos);
+  const fadeIn = () => {
+    // Will change fadeAnim value to 1 in 5 seconds
+    Animated.timing(animatedOpacity, {
+      toValue: 1,
+      duration: 5000,
+      useNativeDriver: true,
+    }).start();
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.listContainer}>
-        {toDos.map((toDo) => (
-          <ToDoItem key={toDo.id} toTo={toDo} onPressDone={onPressDone} />
-        ))}
-      </ScrollView>
-      <View style={styles.formContainer}>
-        <TextInput
-          style={styles.input}
-          onChangeText={onChangeText}
-          value={inputText}
-        />
-        <Button title="Add" onPress={onPressAdd} />
-      </View>
+      <Animated.View
+        style={[
+          {
+            width: 100,
+            height: 100,
+            backgroundColor: 'red',
+            marginTop: 10,
+          },
+          { opacity: animatedOpacity },
+        ]}
+      />
+      <Button title="Fade In View" onPress={fadeIn} />
     </SafeAreaView>
   );
 }
@@ -98,39 +35,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-  },
-  listContainer: {
-    width: '100%',
-  },
-  formContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    marginBottom: 20,
-    padding: 10,
-  },
-  input: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 10,
-    padding: 10,
-  },
-  toDoContainer: {
-    flex: 1,
-    height: 60,
-    margin: 10,
-    backgroundColor: '#90CAF9',
-    borderRadius: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    padding: 10,
-  },
-  text: {
-    fontSize: 20,
-    color: '#455A64',
-  },
-  checkbox: {
-    marginRight: 10,
   },
 });
