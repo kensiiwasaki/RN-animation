@@ -1,14 +1,21 @@
 import { useRef } from 'react';
-import { SafeAreaView, StyleSheet, View, Animated, Button } from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  View,
+  Animated,
+  Button,
+  Easing,
+} from 'react-native';
 
 export default function App() {
-  const animatedOpacity = useRef(new Animated.Value(0)).current;
+  const animatedX = useRef(new Animated.Value(0)).current;
 
-  const fadeIn = () => {
-    // Will change fadeAnim value to 1 in 5 seconds
-    Animated.timing(animatedOpacity, {
-      toValue: 1,
-      duration: 5000,
+  const move = () => {
+    Animated.timing(animatedX, {
+      toValue: 100,
+      duration: 3000,
+      easing: Easing.bounce,
       useNativeDriver: true,
     }).start();
   };
@@ -20,13 +27,13 @@ export default function App() {
           {
             width: 100,
             height: 100,
-            backgroundColor: 'red',
-            marginTop: 10,
+            backgroundColor: 'green',
+            marginTop: 20,
           },
-          { opacity: animatedOpacity },
+          { transform: [{ translateX: animatedX }] },
         ]}
       />
-      <Button title="Fade In View" onPress={fadeIn} />
+      <Button title="move" onPress={move} />
     </SafeAreaView>
   );
 }
@@ -35,5 +42,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
   },
 });
