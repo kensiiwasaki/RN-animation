@@ -13,7 +13,7 @@ export default function App() {
 
   const move = () => {
     Animated.timing(animatedX, {
-      toValue: 100,
+      toValue: 200,
       duration: 3000,
       useNativeDriver: true,
     }).start();
@@ -21,19 +21,28 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View
+        style={{
+          width: 100,
+          height: 100,
+          backgroundColor: 'green',
+          margin: 20,
+        }}
+      />
       <Animated.View
         style={[
           {
             width: 100,
             height: 100,
             backgroundColor: 'green',
-            marginTop: 20,
+            margin: 20,
           },
           { transform: [{ translateX: animatedX }] },
           {
             opacity: animatedX.interpolate({
               inputRange: [0, 100],
-              outputRange: [0, 1],
+              outputRange: [0, 0.5],
+              extrapolate: 'clamp',
             }),
           },
         ]}
@@ -46,7 +55,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
   },
 });
