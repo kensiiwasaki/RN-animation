@@ -15,6 +15,7 @@ const MAX_AVATAR_SIZE = 100;
 const MIN_AVATAR_SIZE = 70;
 const AVATAR_TOP = MAX_HEADER_HEIGHT - MAX_AVATAR_SIZE / 2;
 const AVATAR_TOP_DEST = MAX_HEADER_HEIGHT - HEADER_SCROLL_RANGE;
+const BLUR_RADIUS = 20;
 
 export default function App() {
   const animatedScrollY = useRef(new Animated.Value(0)).current;
@@ -61,10 +62,19 @@ export default function App() {
           },
         ]}
       >
-        <Image
+        <Animated.Image
           source={require('./assets/cover.jpeg')}
           style={styles.cover}
           resizeMethod="auto"
+          blurRadius={animatedScrollY.interpolate({
+            inputRange: [
+              0,
+              HEADER_SCROLL_RANGE,
+              HEADER_SCROLL_RANGE + MAX_AVATAR_SIZE + 20,
+            ],
+            outputRange: [0, 0, BLUR_RADIUS],
+            extrapolate: 'clamp',
+          })}
         />
       </Animated.View>
       <Animated.Image
