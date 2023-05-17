@@ -41,12 +41,17 @@ export default function App() {
         <View style={styles.item} />
         <View style={styles.item} />
       </ScrollView>
-      <View
+      <Animated.View
         style={[
           styles.headerImage,
           // TODO: ヘッダー画像をアニメーションさせる
           {
             height: MAX_HEADER_HEIGHT,
+            top: animatedScrollY.interpolate({
+              inputRange: [0, HEADER_SCROLL_RANGE],
+              outputRange: [0, -HEADER_SCROLL_RANGE],
+              extrapolate: 'clamp',
+            }),
             zIndex: 0,
           },
         ]}
@@ -56,7 +61,7 @@ export default function App() {
           style={styles.cover}
           resizeMethod="auto"
         />
-      </View>
+      </Animated.View>
       <Animated.Image
         source={require('./assets/avatar.jpeg')}
         style={[
