@@ -14,6 +14,7 @@ const HEADER_SCROLL_RANGE = 70;
 const MAX_AVATAR_SIZE = 100;
 const MIN_AVATAR_SIZE = 70;
 const AVATAR_TOP = MAX_HEADER_HEIGHT - MAX_AVATAR_SIZE / 2;
+const AVATAR_TOP_DEST = MAX_HEADER_HEIGHT - HEADER_SCROLL_RANGE;
 
 export default function App() {
   const animatedScrollY = useRef(new Animated.Value(0)).current;
@@ -52,7 +53,11 @@ export default function App() {
               outputRange: [0, -HEADER_SCROLL_RANGE],
               extrapolate: 'clamp',
             }),
-            zIndex: 0,
+            zIndex: animatedScrollY.interpolate({
+              inputRange: [0, HEADER_SCROLL_RANGE],
+              outputRange: [0, 1],
+              extrapolate: 'clamp',
+            }),
           },
         ]}
       >
@@ -79,10 +84,14 @@ export default function App() {
               extrapolate: 'clamp',
             }),
             top: animatedScrollY.interpolate({
-              inputRange: [0, 1],
-              outputRange: [AVATAR_TOP, AVATAR_TOP - 1],
+              inputRange: [0, HEADER_SCROLL_RANGE, HEADER_SCROLL_RANGE + 1],
+              outputRange: [AVATAR_TOP, AVATAR_TOP_DEST, AVATAR_TOP_DEST - 1],
             }),
-            zIndex: 1,
+            zIndex: animatedScrollY.interpolate({
+              inputRange: [0, HEADER_SCROLL_RANGE],
+              outputRange: [1, 0],
+              extrapolate: 'clamp',
+            }),
           },
         ]}
       />
