@@ -10,13 +10,22 @@ import {
 
 const MAX_HEADER_HEIGHT = 150;
 const MIN_HEADER_HEIGHT = 80;
+const HEADER_SCROLL_RANGE = 70;
 const MAX_AVATAR_SIZE = 100;
+const MIN_AVATAR_SIZE = 70;
 const AVATAR_TOP = MAX_HEADER_HEIGHT - MAX_AVATAR_SIZE / 2;
 
 export default function App() {
+  const animatedScrollY = useRef(new Animated.Value(0)).current;
+
   return (
     <View style={styles.container}>
-      <ScrollView>
+      <ScrollView
+        onScroll={Animated.event([
+          { nativeEvent: { contentOffset: { y: animatedScrollY } } },
+        ])}
+        scrollEventThrottle={16}
+      >
         <View style={{ height: MAX_HEADER_HEIGHT * 1.5 }} />
         <View style={styles.item} />
         <View style={styles.item} />
@@ -48,15 +57,26 @@ export default function App() {
           resizeMethod="auto"
         />
       </View>
-      <Image
+      <Animated.Image
         source={require('./assets/avatar.jpeg')}
         style={[
           styles.avatar,
           // TODO: アバター画像をアニメーションさせる
           {
-            width: MAX_AVATAR_SIZE,
-            height: MAX_AVATAR_SIZE,
-            top: AVATAR_TOP,
+            width: animatedScrollY.interpolate({
+              inputRange: [0, HEADER_SCROLL_RANGE],
+              outputRange: [MAX_AVATAR_SIZE, MIN_AVATAR_SIZE],
+              extrapolate: 'clamp',
+            }),
+            height: animatedScrollY.interpolate({
+              inputRange: [0, HEADER_SCROLL_RANGE],
+              outputRange: [MAX_AVATAR_SIZE, MIN_AVATAR_SIZE],
+              extrapolate: 'clamp',
+            }),
+            top: animatedScrollY.interpolate({
+              inputRange: [0, 1],
+              outputRange: [AVATAR_TOP, AVATAR_TOP - 1],
+            }),
             zIndex: 1,
           },
         ]}
