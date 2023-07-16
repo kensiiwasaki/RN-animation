@@ -6,6 +6,7 @@ import {
   Animated,
   ScrollView,
   TouchableOpacity,
+  Text,
 } from 'react-native';
 
 const MAX_HEADER_HEIGHT = 150;
@@ -28,7 +29,7 @@ export default function App() {
         ])}
         scrollEventThrottle={16}
       >
-        <View style={{ height: MAX_HEADER_HEIGHT * 1.5 }} />
+        <View style={{ height: MAX_HEADER_HEIGHT * 1.8 }} />
         <View style={styles.item} />
         <View style={styles.item} />
         <View style={styles.item} />
@@ -43,6 +44,30 @@ export default function App() {
         <View style={styles.item} />
         <View style={styles.item} />
       </ScrollView>
+
+      <Animated.View
+        style={{
+          position: 'absolute',
+          top: 80,
+          left: 0,
+          right: 0,
+          height: 50, // The height of your sticky tab
+          backgroundColor: 'skyblue',
+          justifyContent: 'center',
+          transform: [
+            {
+              translateY: animatedScrollY.interpolate({
+                inputRange: [0, MAX_HEADER_HEIGHT * 1.5 - 50],
+                outputRange: [MAX_HEADER_HEIGHT * 1.5 - 100, 0],
+                extrapolate: 'clamp',
+              }),
+            },
+          ],
+        }}
+      >
+        <Text>これはタブです</Text>
+      </Animated.View>
+
       <Animated.View
         style={[
           styles.headerImage,
@@ -77,6 +102,7 @@ export default function App() {
           })}
         />
       </Animated.View>
+
       <Animated.Image
         source={require('./assets/avatar.jpeg')}
         style={[
